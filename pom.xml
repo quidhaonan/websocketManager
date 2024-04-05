@@ -82,7 +82,11 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>5.3.33</version>
 		</dependency>
-
+		<!--验证框架-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

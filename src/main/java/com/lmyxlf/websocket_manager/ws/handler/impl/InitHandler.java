@@ -1,4 +1,4 @@
-package com.lmyxlf.websocket_manager.ws.handler;
+package com.lmyxlf.websocket_manager.ws.handler.impl;
 
 import com.lmyxlf.websocket_manager.constants.ExceptionEnum;
 import com.lmyxlf.websocket_manager.exception.CustomExceptions;
@@ -8,6 +8,7 @@ import com.lmyxlf.websocket_manager.ws.WsStore;
 import com.lmyxlf.websocket_manager.ws.cmd.WsBaseCmd;
 import com.lmyxlf.websocket_manager.ws.cmd.WsCmdType;
 import com.lmyxlf.websocket_manager.ws.cmd.impl.InitCmd;
+import com.lmyxlf.websocket_manager.ws.handler.WsHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,8 @@ public class InitHandler implements WsHandler<InitCmd> {
 
     private static final WsCmdType CMD_TYPE = WsCmdType.INIT;
 
+    private static final Integer MAX_CONNECT = 99;
+
     @PostConstruct
     public void init() {
         WsServerEndpoint.registerHandler(CMD_TYPE, this);
@@ -30,6 +33,13 @@ public class InitHandler implements WsHandler<InitCmd> {
 
     @Override
     public Object handle(InitCmd cmd, Session session, WsBaseCmd wsBaseCmd) {
+
+        // 防止随机 clientId 进行初始化，设置最多连接数
+        int size = WsManager.getAllActiveWebs().size();
+        if (size > MAX_CONNECT) {
+            log.error("活跃web:{}", String.join(",", WsManager.getAllActiveWebs()));
+            throw new CustomExceptions(ExceptionEnum.MAX_CONNECT);
+        }
 
         // 1. 查询
         String clientId = cmd.getClientId();
@@ -49,7 +59,7 @@ public class InitHandler implements WsHandler<InitCmd> {
         // 记录ws 信息
         WsManager.initSession(session, clientId);
 
-        WsManager.sendOK(session, wsBaseCmd, null);
+//        WsManager.sendOK(session, wsBaseCmd, null);
 
         return null;
     }

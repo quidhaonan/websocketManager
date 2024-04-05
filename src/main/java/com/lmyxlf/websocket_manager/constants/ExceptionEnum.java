@@ -8,7 +8,9 @@ import lombok.Getter;
 @Getter
 public enum ExceptionEnum {
     BAD_REQUEST("1001", "服务器异常"),
-    DEVICE_NOT_ONLINE("1002", "设备不在线");
+    DEVICE_NOT_ONLINE("1002", "设备不在线"),
+    MAX_CONNECT("1003", "连接数过多"),
+    BROWSER_OFFLINE("1004", "浏览器已下线");
 
     private final String code;
     private final String msg;

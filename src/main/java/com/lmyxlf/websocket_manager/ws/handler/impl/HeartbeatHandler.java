@@ -1,4 +1,4 @@
-package com.lmyxlf.websocket_manager.ws.handler;
+package com.lmyxlf.websocket_manager.ws.handler.impl;
 
 
 import com.lmyxlf.websocket_manager.constants.AppConstant;
@@ -7,6 +7,7 @@ import com.lmyxlf.websocket_manager.ws.WsServerEndpoint;
 import com.lmyxlf.websocket_manager.ws.cmd.WsBaseCmd;
 import com.lmyxlf.websocket_manager.ws.cmd.WsCmdType;
 import com.lmyxlf.websocket_manager.ws.cmd.impl.HeartbeatCmd;
+import com.lmyxlf.websocket_manager.ws.handler.WsHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -8,6 +8,7 @@ import com.lmyxlf.websocket_manager.constants.ExceptionEnum;
 import com.lmyxlf.websocket_manager.exception.CustomExceptions;
 import com.lmyxlf.websocket_manager.ws.cmd.WsBaseCmd;
 import com.lmyxlf.websocket_manager.ws.cmd.WsCmdType;
+import com.lmyxlf.websocket_manager.ws.handler.impl.DecryptHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
@@ -81,6 +82,9 @@ public class WsManager {
         }
 
         webStores.getIfPresent(imei);
+
+        // 新增
+        DecryptHandler.sendByClientIdMap.getIfPresent(imei);
         return true;
     }
 

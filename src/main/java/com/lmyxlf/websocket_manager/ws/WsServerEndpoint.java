@@ -62,7 +62,6 @@ public class WsServerEndpoint {
     @OnMessage()
     @Async("async_executor")
     public void onMsg(Session session, String text) {
-        System.out.println(Thread.currentThread().getName());
 
 //        Pool.webExecutor.submit(() -> {
             try {
