@@ -80,7 +80,7 @@
         ws.onmessage = function (event) {
             let data = {
                 "type": "decrypt",
-                "msgId": "",
+                "msgId": JSON.parse(event.data).msgId,
                 "data": {
                     "clientId": clientId,
                     "msg": window.encrypt(JSON.parse(event.data).data),

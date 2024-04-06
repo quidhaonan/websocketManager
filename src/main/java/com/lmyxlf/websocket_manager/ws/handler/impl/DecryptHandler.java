@@ -20,9 +20,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.websocket.Session;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.UUID;
 
 /**
  * 通过浏览器加密明文
@@ -34,13 +32,13 @@ public class DecryptHandler implements WsHandler<DecryptCmd> {
     private static final WsCmdType CMD_TYPE = WsCmdType.DECRYPT;
 
     // clientId --> List<Session>
-    public static final LoadingCache<String, List<Session>> sendByClientIdMap = CacheBuilder.newBuilder()
+    public static final LoadingCache<String, WsStore> sendByClientIdMap = CacheBuilder.newBuilder()
             .maximumSize(200)
             .expireAfterAccess(Duration.ofMillis((int) (1000 * 60 * 3 * 2.5)))
-            .build(new CacheLoader<String, List<Session>>() {
+            .build(new CacheLoader<String, WsStore>() {
                 @Override
-                public List<Session> load(@NotNull String key) {
-                    return new CopyOnWriteArrayList<>();
+                public WsStore load(@NotNull String key) {
+                    return null;
                 }
             });
 
@@ -59,19 +57,20 @@ public class DecryptHandler implements WsHandler<DecryptCmd> {
             throw new CustomExceptions(ExceptionEnum.BROWSER_OFFLINE);
         }
 
-        List<Session> sessions = sendByClientIdMap.getIfPresent(clientId);
-        if (ObjectUtil.isNull(sessions)) {
-            sessions = new CopyOnWriteArrayList<>();
-            sendByClientIdMap.put(clientId, sessions);
-        }
-
         // 浏览器将加密后的密文发送过来
         if (cmd.getFlag()) {
-            for (Session item : sessions) {
-                WsManager.sendOK(item, wsWebBaseCmd, cmd.getMsg());
+            WsStore store = sendByClientIdMap.getIfPresent(wsWebBaseCmd.getMsgId());
+            if (ObjectUtil.isNull(store)) {
+                log.error("[浏览器解密]，无 msgId ，发送失败");
+                throw new CustomExceptions(ExceptionEnum.BROWSER_OFFLINE);
             }
+
+            WsManager.sendOK(store.getSession(), wsWebBaseCmd, cmd.getMsg());
+            sendByClientIdMap.invalidate(wsWebBaseCmd.getMsgId());
         } else {
-            sessions.add(session);
+            UUID uuid = UUID.randomUUID();
+            sendByClientIdMap.put(uuid.toString(),new WsStore().setSession(session).setClientId(clientId));
+            wsWebBaseCmd.setMsgId(uuid.toString());
             // 程序请求注册的浏览器 ----> 携带明文
             WsManager.sendOK(wsStore.getSession(), wsWebBaseCmd, cmd.getMsg());
         }
