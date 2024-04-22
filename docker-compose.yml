@@ -1,0 +1,24 @@
+version: "1.0.0"
+
+services:
+  websocket_manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: websocket_manager
+    ports:
+      - "9999:9999"
+    networks:
+      - lmyxlf
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "./nginx/html:/usr/share/nginx/html"
+    depends_on:
+      - websocket_manager
+    networks:
+      lmyxlf

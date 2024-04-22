@@ -37,7 +37,8 @@ public class WsManager {
     private static final int cacheExpire = (int) (wsExpire * 2.5);
 
     // ws session 在openSession 后没有进入活跃状态会被关闭
-    private static final int dangerDuration = 1000 * 10 * 3;
+//    private static final int dangerDuration = 1000 * 10 * 3;
+    private static final int dangerDuration = 1000 * 60 * 5;
 
     private static final int cacheSize = 200;
 

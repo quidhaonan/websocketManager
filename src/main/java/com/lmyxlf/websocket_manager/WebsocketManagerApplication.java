@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class WebsocketManagerApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(WebsocketManagerApplication.class, args);
 	}
 
