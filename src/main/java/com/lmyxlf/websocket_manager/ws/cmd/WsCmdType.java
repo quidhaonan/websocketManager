@@ -29,7 +29,8 @@ public enum WsCmdType {
     /**
      * 通过浏览器加密明文
      */
-    DECRYPT("decrypt", DecryptCmd.class, true);
+    DECRYPT("decrypt", DecryptCmd.class, true),
+    DECRYPT_HTTPS("decryptHttps", DecryptCmd.class, true);
 
     private final String type;
 

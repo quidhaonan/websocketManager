@@ -65,10 +65,12 @@ public class DecryptHandler implements WsHandler<DecryptCmd> {
                 throw new CustomExceptions(ExceptionEnum.BROWSER_OFFLINE);
             }
 
+            // 返回数据前清除 map
             WsManager.sendOK(store.getSession(), wsWebBaseCmd, cmd.getMsg());
             sendByClientIdMap.invalidate(wsWebBaseCmd.getMsgId());
         } else {
             UUID uuid = UUID.randomUUID();
+            // 存放消息 id，记录应该发给谁
             sendByClientIdMap.put(uuid.toString(),new WsStore().setSession(session).setClientId(clientId));
             wsWebBaseCmd.setMsgId(uuid.toString());
             // 程序请求注册的浏览器 ----> 携带明文
