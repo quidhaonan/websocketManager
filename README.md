@@ -1,5 +1,11 @@
 # websocketManager
 
+## 注意
+
+1. 代码放入浏览器无痕模式下，不然会被拦截 CSP
+
+
+
 ## 1. 初始化
 
 1. 客户端请求
@@ -42,26 +48,24 @@
         if(window.lmy?.flag){
             return
         }
-
-        window.lmy = {
-            flag: true
-        }
+    
+        window.lmy = {}
         // e：加密函数
         window.lmy.encrypt = e
         // url：ws地址
         let url = 'ws://localhost:9999/ws'
         let clientId = '123456'
-
+    
         let ws
         // WebSocket 重连尝试的间隔时间（毫秒）
         const RECONNECT_INTERVAL = 1000;
         // 是否应该尝试重连
         let shouldReconnect = true;
-
+    
         // 创建 WebSocket 连接函数
         function connect() {
             ws = new WebSocket(url);
-
+    
             ws.onopen = function (event) {
                 let initData = {
                     "type": "init",
@@ -71,19 +75,20 @@
                     }
                 }
                 ws.send(JSON.stringify(initData))
-
+    
                 setInterval(() => {
                     let heartData = {
                         "type": "heartbeat",
                         "msgId": '',
                         "data": {
-
+    
                         }
                     }
                     ws.send(JSON.stringify(heartData))
                 }, 1000 * 60 * 2)
+                window.lmy.flag = true
             }
-
+    
             ws.onmessage = function (event) {
                 let data = {
                     "type": "decrypt",
@@ -96,11 +101,11 @@
                 }
                 ws.send(JSON.stringify(data))
             }
-
+    
             ws.onerror = function (error) {
                 console.error('WebSocket error:', error);
             };
-
+    
             ws.onclose = function () {
                 console.error('WebSocket disconnected');
                 // 等待一段时间后尝试重连
@@ -109,17 +114,17 @@
                 }
             };
         }
-
+    
         // 初次连接
         connect();
-
+    
         // 停止重连
         window.lmy.stopReconnect = function stopReconnect() {
             shouldReconnect = false
         }
     })()
     ```
-
+    
 2. 应用程序对 websocket 进行请求
     + clientId 需与浏览器 clientId 对应
         ```json
@@ -145,9 +150,7 @@
             return
         }
     
-        window.lmy = {
-            flag: true
-        }
+        window.lmy = {}
         // e：加密函数
         window.lmy.encrypt = e
         // url：ws地址
@@ -184,6 +187,7 @@
                     }
                     ws.send(JSON.stringify(heartData))
                 }, 1000 * 60 * 2)
+                window.lmy.flag = true
             }
     
             ws.onmessage = function (event) {
@@ -221,7 +225,7 @@
         }
     })()
     ```
-
+    
 2. 应用程序使用 https 进行请求
 
    + 地址：localhost:9999/ws/decrypt
@@ -271,9 +275,9 @@
 	  docker run  -d  --name websocket_manager -p 9999:9999 -v /c/logs:/logs -e TZ=Asia/Shanghai --network lmyxlf websocket_manager
 	  ```
 	
-	  docker run -d  --name websocket_manager -p 9999:9999  -e TZ=Asia/Shanghai --network lmyxlf websocket_manager
-
-
-
-
+	  ```shell
+	  docker run -d  --name websocket_manager -p 9999:9999 -e TZ=Asia/Shanghai --network lmyxlf websocket_manager
+	  ```
+	  
+	  
 
